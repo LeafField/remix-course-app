@@ -6,3 +6,9 @@ export type Expenses = {
         date: string;
     }[];
 };
+
+export type ExpensesData = {
+    title: string;
+    amount: string;
+    date: string;
+};

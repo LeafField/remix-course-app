@@ -1,7 +1,9 @@
-import { Link } from "@remix-run/react";
+import { Link, useActionData } from "@remix-run/react";
+import { action } from "../../routes/_app.expenses.add";
 
 function ExpenseForm() {
     const today = new Date().toISOString().slice(0, 10); // yields something like 2023-09-10
+    const validationErrors = useActionData<typeof action>();
 
     return (
         <form method="post" className="form" id="expense-form">
@@ -39,6 +41,13 @@ function ExpenseForm() {
                     />
                 </p>
             </div>
+            {validationErrors && (
+                <ul>
+                    {Object.values(validationErrors).map((error) => (
+                        <li key={error}>{error}</li>
+                    ))}
+                </ul>
+            )}
             <div className="form-actions">
                 <button>Save Expense</button>
                 <Link relative="path" to={".."}>
