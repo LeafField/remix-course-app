@@ -1,12 +1,50 @@
-import { Link, useActionData } from "@remix-run/react";
+import {
+    Form,
+    Link,
+    useActionData,
+    useMatches,
+    useNavigation,
+    useParams,
+} from "@remix-run/react";
 import { action } from "../../routes/_app.expenses.add";
+import { ExpensesData } from "../../types/type";
+
+type ExpensesType = {
+    amount: number;
+    date: string;
+    dateAdded: string;
+    id: string;
+    title: string;
+};
 
 function ExpenseForm() {
     const today = new Date().toISOString().slice(0, 10); // yields something like 2023-09-10
     const validationErrors = useActionData<typeof action>();
+    // const expenseData = useLoaderData<expenseIdLoader>();
+    const matches = useMatches();
+    const params = useParams();
+    const expenses = matches.find(
+        (match) => match.id === "routes/_app.expenses"
+    )?.data as ExpensesType[];
+    const expenseData = expenses.find((expense) => expense.id === params.id);
+    const navigation = useNavigation();
+
+    const defaultValue: ExpensesData = expenseData
+        ? {
+              title: expenseData.title,
+              amount: String(expenseData.amount),
+              date: String(expenseData.date),
+          }
+        : {
+              title: "",
+              amount: "0.00",
+              date: "",
+          };
+
+    const isSubmitting = navigation.state !== "idle";
 
     return (
-        <form method="post" className="form" id="expense-form">
+        <Form method="post" className="form" id="expense-form">
             <p>
                 <label htmlFor="title">Expense Title</label>
                 <input
@@ -15,6 +53,7 @@ function ExpenseForm() {
                     name="title"
                     required
                     maxLength={30}
+                    defaultValue={defaultValue.title}
                 />
             </p>
 
@@ -28,6 +67,7 @@ function ExpenseForm() {
                         min="0"
                         step="0.01"
                         required
+                        defaultValue={defaultValue.amount}
                     />
                 </p>
                 <p>
@@ -38,6 +78,11 @@ function ExpenseForm() {
                         name="date"
                         max={today}
                         required
+                        defaultValue={
+                            defaultValue.date
+                                ? defaultValue.date.slice(0, 10)
+                                : ""
+                        }
                     />
                 </p>
             </div>
@@ -49,12 +94,14 @@ function ExpenseForm() {
                 </ul>
             )}
             <div className="form-actions">
-                <button>Save Expense</button>
+                <button disabled={isSubmitting}>
+                    {isSubmitting ? "save..." : "Save Expense"}
+                </button>
                 <Link relative="path" to={".."}>
                     Cancel
                 </Link>
             </div>
-        </form>
+        </Form>
     );
 }
 

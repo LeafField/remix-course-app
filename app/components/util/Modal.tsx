@@ -6,13 +6,15 @@ const Modal: FC<PropsWithChildren> = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        modalRef.current?.showModal();
+        const modal = modalRef.current;
         const controller = new AbortController();
+
+        modal?.showModal();
 
         window.addEventListener(
             "click",
             (e) => {
-                if (e.target === modalRef.current) {
+                if (e.target === modal) {
                     navigate("..");
                     controller.abort();
                 }
@@ -20,11 +22,22 @@ const Modal: FC<PropsWithChildren> = ({ children }) => {
             { signal: controller.signal }
         );
 
+        window.addEventListener(
+            "keydown",
+            (e) => {
+                if (e.key === "Escape") {
+                    navigate("..");
+                    controller.abort;
+                }
+            },
+            { signal: controller.signal }
+        );
+
         return () => {
-            modalRef.current?.close();
+            modal?.close();
             controller.abort();
         };
-    }, [modalRef]);
+    }, [navigate]);
 
     return (
         <dialog className="modal" ref={modalRef}>
