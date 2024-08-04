@@ -5,7 +5,7 @@ type Props = {
     title: string;
 };
 
-const Error: FC<PropsWithChildren<Props>> = ({ title, children }) => {
+const ErrorComponent: FC<PropsWithChildren<Props>> = ({ title, children }) => {
     return (
         <div className="error">
             <div className="icon">
@@ -17,4 +17,4 @@ const Error: FC<PropsWithChildren<Props>> = ({ title, children }) => {
     );
 };
 
-export default Error;
+export default ErrorComponent;

@@ -1,13 +1,18 @@
 import {
+    isRouteErrorResponse,
+    Link,
     Links,
     Meta,
     Outlet,
     Scripts,
     ScrollRestoration,
+    useRouteError,
 } from "@remix-run/react";
 
 import sharedStyle from "./styles/shared.css?url";
 import { LinksFunction } from "@remix-run/node";
+import { FC } from "react";
+import ErrorComponent from "./components/util/Error";
 
 export function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -47,3 +52,28 @@ export default function App() {
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: sharedStyle },
 ];
+
+export const ErrorBoundary: FC = () => {
+    const error = useRouteError();
+    if (isRouteErrorResponse(error)) {
+        return (
+            <main>
+                <ErrorComponent title={error.statusText}>
+                    <p>{error.data.message}</p>
+                    <p>
+                        Back to <Link to={"/"}>safty</Link>
+                    </p>
+                </ErrorComponent>
+            </main>
+        );
+    } else if (error instanceof Error) {
+        <main>
+            <ErrorComponent title={error.message}>
+                <p>{error.message}</p>
+                <p>
+                    Back to <Link to={"/"}>safty</Link>
+                </p>
+            </ErrorComponent>
+        </main>;
+    }
+};
