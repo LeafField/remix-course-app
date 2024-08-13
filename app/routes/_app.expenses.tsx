@@ -1,4 +1,4 @@
-import { json, Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import ExpensesList from "../components/expenses/ExpensesList";
 
 import { FaDownload, FaPlus } from "react-icons/fa";
