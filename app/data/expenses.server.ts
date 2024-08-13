@@ -11,8 +11,7 @@ export async function addExpenses(expensesData: ExpensesData) {
             },
         });
     } catch (err) {
-        console.log(err);
-        throw err;
+        throw new Error("Faild to add expenses");
     }
 }
 
@@ -32,8 +31,7 @@ export async function updateExpense(
             },
         });
     } catch (err) {
-        console.log(err);
-        throw err;
+        throw new Error("Faild to update expenses");
     }
 }
 
@@ -43,7 +41,6 @@ export async function deleteExpense(id: string | undefined) {
             where: { id },
         });
     } catch (err) {
-        console.log(err);
-        throw err;
+        throw new Error("Faild to delete expenses");
     }
 }

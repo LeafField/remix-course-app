@@ -55,6 +55,7 @@ export const links: LinksFunction = () => [
 
 export const ErrorBoundary: FC = () => {
     const error = useRouteError();
+    console.error(error);
     if (isRouteErrorResponse(error)) {
         return (
             <main>
@@ -67,13 +68,15 @@ export const ErrorBoundary: FC = () => {
             </main>
         );
     } else if (error instanceof Error) {
-        <main>
-            <ErrorComponent title={error.message}>
-                <p>{error.message}</p>
-                <p>
-                    Back to <Link to={"/"}>safty</Link>
-                </p>
-            </ErrorComponent>
-        </main>;
+        return (
+            <main>
+                <ErrorComponent title={error.message}>
+                    <p>{error.message}</p>
+                    <p>
+                        Back to <Link to={"/"}>safty</Link>
+                    </p>
+                </ErrorComponent>
+            </main>
+        );
     }
 };

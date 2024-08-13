@@ -1,16 +1,18 @@
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { json, Link, Outlet, useLoaderData } from "@remix-run/react";
 import ExpensesList from "../components/expenses/ExpensesList";
 
 import { FaDownload, FaPlus } from "react-icons/fa";
 import { getExpenses } from "../data/database.server";
 
-export const loader = () => {
-    return getExpenses();
+export const loader = async () => {
+    const expenses = await getExpenses();
+
+    return expenses;
 };
 
 const ExpensesLayout = () => {
     const expenses = useLoaderData<typeof loader>();
-
+    const hasExpenses = expenses && expenses.length > 0;
     return (
         <>
             <Outlet />
@@ -25,7 +27,15 @@ const ExpensesLayout = () => {
                         <span>Load Raw Data</span>
                     </a>
                 </section>
-                <ExpensesList expenses={expenses} />
+                {hasExpenses && <ExpensesList expenses={expenses} />}
+                {!hasExpenses && (
+                    <section id="no-expenses">
+                        <h1>No Expenses found</h1>
+                        <p>
+                            Start <Link to={"add"}>adding some</Link> today.
+                        </p>
+                    </section>
+                )}
             </main>
         </>
     );

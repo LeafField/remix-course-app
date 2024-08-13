@@ -45,8 +45,7 @@ export async function getExpenses() {
         });
         return expenses;
     } catch (err) {
-        console.log(err);
-        throw err;
+        throw new Error("Faild to get expenses");
     }
 }
 
@@ -55,7 +54,6 @@ export async function getExpense(id: string | undefined) {
         const expense = await prisma.expenses.findFirst({ where: { id } });
         return expense;
     } catch (err) {
-        console.log(err);
-        throw err;
+        throw new Error("Faild to get expense");
     }
 }
