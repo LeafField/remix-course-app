@@ -1,10 +1,18 @@
-import { Form, Link, useNavigation, useSearchParams } from "@remix-run/react";
+import {
+    Form,
+    Link,
+    useActionData,
+    useNavigation,
+    useSearchParams,
+} from "@remix-run/react";
 import { FaLock, FaUserPlus } from "react-icons/fa";
+import { action } from "../../routes/_marketing.auth";
 
 const AuthForm = () => {
     const [searchParams] = useSearchParams();
     const navigation = useNavigation();
     const authMode = searchParams.get("mode") || "login";
+    const validationError = useActionData<typeof action>();
 
     const submitBtnCaption = authMode === "Loagin" ? "Login" : "Create User";
     const toggleBtnCaption =
@@ -30,6 +38,13 @@ const AuthForm = () => {
                     minLength={7}
                 />
             </p>
+            {validationError && (
+                <ul>
+                    {Object.values(validationError).map((error) => (
+                        <li key={error}>{error}</li>
+                    ))}
+                </ul>
+            )}
             <div className="form-actions">
                 <button disabled={isSubmitting}>
                     {isSubmitting ? "Authenticating..." : submitBtnCaption}
