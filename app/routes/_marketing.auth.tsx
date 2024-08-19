@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LinksFunction } from "@remix-run/node";
+import { ActionFunctionArgs, LinksFunction, redirect } from "@remix-run/node";
 import { FC } from "react";
 import authStyle from "~/styles/auth.css?url";
 import AuthForm from "~/components/auth/AuthForm";
@@ -6,6 +6,7 @@ import {
     validateCredentials,
     type Credentials,
 } from "../data/validation.server";
+import { signup } from "../data/auth.server.js";
 
 const AuthPage: FC = () => {
     return <AuthForm />;
@@ -29,6 +30,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         return err as unknown as Partial<Credentials>;
     }
 
-    // if (authMode === "login") {
-    // }
+    if (authMode === "login") {
+        //signin
+    } else {
+        await signup(credentials);
+        return redirect("/expenses");
+    }
 };
