@@ -7,6 +7,7 @@ import {
     type Credentials,
 } from "../data/validation.server";
 import { signup } from "../data/auth.server.js";
+import { ExistingUserError } from "../data/auth.server.js";
 
 const AuthPage: FC = () => {
     return <AuthForm />;
@@ -30,10 +31,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         return err as unknown as Partial<Credentials>;
     }
 
-    if (authMode === "login") {
-        //signin
-    } else {
-        await signup(credentials);
-        return redirect("/expenses");
+    try {
+        if (authMode === "login") {
+            //signin
+        } else {
+            await signup(credentials);
+            return redirect("/expenses");
+        }
+    } catch (error) {
+        if (error instanceof ExistingUserError && error.status === 422) {
+            return { credentials: error.message };
+        }
     }
 };
