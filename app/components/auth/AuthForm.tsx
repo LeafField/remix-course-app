@@ -14,7 +14,7 @@ const AuthForm = () => {
     const authMode = searchParams.get("mode") || "login";
     const validationError = useActionData<typeof action>();
 
-    const submitBtnCaption = authMode === "Loagin" ? "Login" : "Create User";
+    const submitBtnCaption = authMode === "login" ? "Login" : "Create User";
     const toggleBtnCaption =
         authMode === "login"
             ? "Create a new user"

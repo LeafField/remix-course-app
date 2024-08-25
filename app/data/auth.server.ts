@@ -1,6 +1,33 @@
 import { prisma } from "./database.server";
 import { Credentials } from "./validation.server";
 import bcrypt from "bcrypt";
+import { createCookieSessionStorage, redirect } from "@remix-run/node";
+
+const SESSION_SECRET = process.env.SESSION_SECRET!;
+
+type Session = {
+    userId: string;
+};
+
+const sessionStorage = createCookieSessionStorage<Session>({
+    cookie: {
+        secure: process.env.NODE_ENV === "production",
+        secrets: [SESSION_SECRET],
+        sameSite: "lax",
+        maxAge: 30 * 24 * 60 * 60, // 30days,
+        httpOnly: true,
+    },
+});
+
+async function createUserSession(userId: string, redirectPath: string) {
+    const session = await sessionStorage.getSession();
+    session.set("userId", userId);
+    return redirect(redirectPath, {
+        headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session),
+        },
+    });
+}
 
 export class ExistingUserError extends Error {
     constructor(
@@ -29,6 +56,17 @@ export class PasswordError extends Error {
     }
 }
 
+export async function getUserFromSession(request: Request) {
+    const session = await sessionStorage.getSession(
+        request.headers.get("Cookie")
+    );
+    const userId = session.get("userId");
+    if (!userId) {
+        return null;
+    }
+    return userId;
+}
+
 export async function signup({ email, password }: Credentials) {
     const existingUser = await prisma.user.findFirst({ where: { email } });
     if (existingUser) {
@@ -41,9 +79,10 @@ export async function signup({ email, password }: Credentials) {
 
     const passwordHash = await bcrypt.hash(password, 12);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
         data: { email: email, password: passwordHash },
     });
+    return createUserSession(user.id, "/expenses");
 }
 
 export async function login({ email, password }: Credentials) {
@@ -68,4 +107,6 @@ export async function login({ email, password }: Credentials) {
         );
         throw error;
     }
+
+    return createUserSession(existingUser.id, "/expenses");
 }

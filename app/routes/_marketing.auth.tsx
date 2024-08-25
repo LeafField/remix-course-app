@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LinksFunction, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, LinksFunction } from "@remix-run/node";
 import { FC } from "react";
 import authStyle from "~/styles/auth.css?url";
 import AuthForm from "~/components/auth/AuthForm";
@@ -6,8 +6,7 @@ import {
     validateCredentials,
     type Credentials,
 } from "../data/validation.server";
-import { signup } from "../data/auth.server.js";
-import { ExistingUserError } from "../data/auth.server.js";
+import { login, signup, ExistingUserError } from "../data/auth.server.js";
 
 const AuthPage: FC = () => {
     return <AuthForm />;
@@ -33,10 +32,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     try {
         if (authMode === "login") {
-            //signin
+            return login(credentials);
         } else {
-            await signup(credentials);
-            return redirect("/expenses");
+            return signup(credentials);
         }
     } catch (error) {
         if (error instanceof ExistingUserError && error.status === 422) {

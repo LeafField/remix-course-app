@@ -6,13 +6,13 @@ import { getExpenses } from "../data/database.server";
 
 export const loader = async () => {
     const expenses = await getExpenses();
-
     return expenses;
 };
 
 const ExpensesLayout = () => {
     const expenses = useLoaderData<typeof loader>();
     const hasExpenses = expenses && expenses.length > 0;
+
     return (
         <>
             <Outlet />
