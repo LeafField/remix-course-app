@@ -3,8 +3,11 @@ import ExpensesList from "../components/expenses/ExpensesList";
 
 import { FaDownload, FaPlus } from "react-icons/fa";
 import { getExpenses } from "../data/database.server";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { requireUserSession } from "../data/auth.server";
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    await requireUserSession(request);
     const expenses = await getExpenses();
     return expenses;
 };
