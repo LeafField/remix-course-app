@@ -1,7 +1,7 @@
 import { FC } from "react";
 import ExpenseStatistics from "../components/expenses/ExpenseStatistics";
 import Chart from "../components/expenses/Chart";
-import { json } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { getExpenses } from "../data/database.server";
 import {
     isRouteErrorResponse,
@@ -9,9 +9,11 @@ import {
     useRouteError,
 } from "@remix-run/react";
 import ErrorComponent from "../components/util/Error";
+import { requireUserSession } from "../data/auth.server";
 
-export const loader = async () => {
-    const expenses = await getExpenses();
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+    const userId = await requireUserSession(request);
+    const expenses = await getExpenses(userId);
     if (!expenses || expenses.length === 0) {
         throw json(
             {

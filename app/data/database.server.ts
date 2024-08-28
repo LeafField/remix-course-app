@@ -38,9 +38,13 @@ const prisma = PrismaInstance.client;
 
 export { prisma };
 
-export async function getExpenses() {
+export async function getExpenses(userId: string) {
+    if (!userId) {
+        throw new Error("Faild to get expenses");
+    }
     try {
         const expenses = await prisma.expenses.findMany({
+            where: { userId },
             orderBy: { date: "desc" },
         });
         return expenses;

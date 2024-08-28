@@ -5,6 +5,7 @@ import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { addExpenses } from "../data/expenses.server";
 import type { ExpensesData } from "../types/type";
 import { Errors, validateExpenseInput } from "../data/validation.server";
+import { requireUserSession } from "../data/auth.server";
 
 const AddExpensesPage: FC = () => {
     return (
@@ -17,6 +18,7 @@ const AddExpensesPage: FC = () => {
 export default AddExpensesPage;
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+    const userId = await requireUserSession(request);
     const formData = await request.formData();
     const expensesData = Object.fromEntries(
         formData
@@ -28,6 +30,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         return err as Errors;
     }
 
-    await addExpenses(expensesData);
+    await addExpenses(expensesData, userId);
     return redirect("/expenses");
 };

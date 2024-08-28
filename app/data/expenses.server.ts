@@ -1,13 +1,16 @@
 import { prisma } from "./database.server";
 import type { ExpensesData } from "../types/type";
 
-export async function addExpenses(expensesData: ExpensesData) {
+export async function addExpenses(expensesData: ExpensesData, userId: string) {
     try {
         return await prisma.expenses.create({
             data: {
                 title: expensesData.title,
                 amount: Number(expensesData.amount),
                 date: new Date(expensesData.date),
+                User: {
+                    connect: { id: userId },
+                },
             },
         });
     } catch (err) {
