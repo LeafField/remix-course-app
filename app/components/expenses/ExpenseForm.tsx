@@ -9,7 +9,7 @@ import {
 import { action } from "../../routes/_app.expenses.add";
 import { ExpensesData } from "../../types/type";
 
-type ExpensesType = {
+export type ExpensesType = {
     amount: number;
     date: string;
     dateAdded: string;

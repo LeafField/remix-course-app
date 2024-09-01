@@ -1,3 +1,4 @@
+import { HeadersFunction } from "@remix-run/node";
 import { MetaFunction } from "@remix-run/react";
 import { FaTrophy, FaHandshake } from "react-icons/fa";
 
@@ -47,5 +48,21 @@ const PricingPage = () => {
 export default PricingPage;
 
 export const meta: MetaFunction = () => {
-    return [];
+    return [
+        {
+            title: "Pricing",
+        },
+        {
+            name: "description",
+            content: "See our pricing plans",
+        },
+    ];
 };
+
+export const headers: HeadersFunction = ({ parentHeaders }) => {
+    return {
+        "Cache-Control": parentHeaders.get("Cache-Control") ?? "",
+    };
+};
+
+export const handle = { disableJS: true };

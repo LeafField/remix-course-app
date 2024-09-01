@@ -1,5 +1,5 @@
-import { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { HeadersFunction } from "@remix-run/node";
+import { Link, MetaFunction } from "@remix-run/react";
 import { FC } from "react";
 import { FaArrowRight, FaDollarSign, FaChartBar } from "react-icons/fa";
 
@@ -54,5 +54,17 @@ const Index: FC = () => {
 export default Index;
 
 export const meta: MetaFunction = () => {
-    return [];
+    return [
+        {
+            title: "Remix Enpenses App - the completed App",
+        },
+    ];
 };
+
+export const headers: HeadersFunction = ({ parentHeaders }) => {
+    return {
+        "Cache-Control": parentHeaders.get("Cache-Control") ?? "",
+    };
+};
+
+export const handle = { disableJS: true };

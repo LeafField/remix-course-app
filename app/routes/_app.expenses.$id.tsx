@@ -1,12 +1,10 @@
 import { FC } from "react";
-import ExpenseForm from "../components/expenses/ExpenseForm";
+import ExpenseForm, { ExpensesType } from "../components/expenses/ExpenseForm";
 import Modal from "../components/util/Modal";
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, MetaFunction, redirect } from "@remix-run/node";
 import { deleteExpense, updateExpense } from "../data/expenses.server";
 import { ExpensesData } from "../types/type";
 import { validateExpenseInput } from "../data/validation.server";
-// import { LoaderFunctionArgs } from "@remix-run/node";
-// import { getExpense } from "../data/database.server";
 
 const UpdateExpensesPage: FC = () => {
     return (
@@ -17,14 +15,6 @@ const UpdateExpensesPage: FC = () => {
 };
 
 export default UpdateExpensesPage;
-
-// export const loader = async ({ params }: LoaderFunctionArgs) => {
-//     const expensesId = params.id;
-//     const expense = await getExpense(expensesId);
-//     return expense;
-// };
-
-// export type expenseIdLoader = typeof loader;
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
     const id = params.id;
@@ -43,4 +33,20 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
         await deleteExpense(id);
         return redirect("/expenses");
     }
+};
+export const meta: MetaFunction = ({ matches, params }) => {
+    const expenses = matches.find(
+        (value) => value.id === "routes/_app.expenses"
+    )?.data as ExpensesType[];
+    const expense = expenses.find((value) => value.id === params.id);
+
+    return [
+        {
+            title: expense?.title,
+        },
+        {
+            name: "description",
+            content: "Update Expense",
+        },
+    ];
 };

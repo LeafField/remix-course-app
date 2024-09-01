@@ -1,4 +1,8 @@
-import { ActionFunctionArgs, LinksFunction } from "@remix-run/node";
+import {
+    ActionFunctionArgs,
+    HeadersFunction,
+    LinksFunction,
+} from "@remix-run/node";
 import { FC } from "react";
 import authStyle from "~/styles/auth.css?url";
 import AuthForm from "~/components/auth/AuthForm";
@@ -41,4 +45,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             return { credentials: error.message };
         }
     }
+};
+
+export const headers: HeadersFunction = ({ parentHeaders }) => {
+    return {
+        "Cache-Control": parentHeaders.get("Cache-Control") ?? "",
+    };
 };

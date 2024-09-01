@@ -1,4 +1,8 @@
-import { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import {
+    HeadersFunction,
+    LinksFunction,
+    LoaderFunctionArgs,
+} from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { FC } from "react";
 import marketingStyle from "~/styles/marketing.css?url";
@@ -22,4 +26,10 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     return getUserFromSession(request);
+};
+
+export const headers: HeadersFunction = () => {
+    return {
+        "Cache-Control": "max-age=3600",
+    };
 };

@@ -3,9 +3,11 @@ import {
     Link,
     Links,
     Meta,
+    MetaFunction,
     Outlet,
     Scripts,
     ScrollRestoration,
+    useMatches,
     useRouteError,
 } from "@remix-run/react";
 
@@ -14,7 +16,24 @@ import { LinksFunction } from "@remix-run/node";
 import { FC } from "react";
 import ErrorComponent from "./components/util/Error";
 
+export const meta: MetaFunction = () => {
+    return [
+        { title: "Remix App" },
+        { name: "description", content: "ずんだもんのブログなのだ" },
+    ];
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
+    const matches = useMatches();
+    const disableJS = matches.some((match) => {
+        if (
+            match.handle &&
+            typeof match.handle === "object" &&
+            "disableJS" in match.handle
+        ) {
+            return match.handle.disableJS;
+        } else return false;
+    });
     return (
         <html lang="ja">
             <head>
@@ -39,7 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <body>
                 {children}
                 <ScrollRestoration />
-                <Scripts />
+                {!disableJS && <Scripts />}
             </body>
         </html>
     );

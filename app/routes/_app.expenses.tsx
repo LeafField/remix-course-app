@@ -3,13 +3,19 @@ import ExpensesList from "../components/expenses/ExpensesList";
 
 import { FaDownload, FaPlus } from "react-icons/fa";
 import { getExpenses } from "../data/database.server";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { HeadersFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { requireUserSession } from "../data/auth.server";
+import { json } from "@remix-run/node";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const userId = await requireUserSession(request);
     const expenses = await getExpenses(userId);
-    return expenses;
+    // return expenses;
+    return json(expenses, {
+        headers: {
+            "Cache-control": "max-age=3",
+        },
+    });
 };
 
 const ExpensesLayout = () => {
@@ -45,3 +51,9 @@ const ExpensesLayout = () => {
 };
 
 export default ExpensesLayout;
+
+export const headers: HeadersFunction = ({ loaderHeaders }) => {
+    return {
+        "Cache-Control": loaderHeaders.get("Cache-Control") ?? "",
+    };
+};
